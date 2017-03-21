@@ -28,29 +28,24 @@ public class ContatoDAO {
         this.conexao = new ConexaoMariaDBJDBC();
     }
 
-    public Long inserir(Contato contato) throws SQLException, ClassNotFoundException {
-        Long id = null;
-        String sqlInsert = "INSERT INTO contatos (nome, telefone, celular, endereco) VALUES (?, ?, ?, ?); SELECT LAST_INSERT_ID();";
+    public void inserir(Contato contato) throws SQLException, ClassNotFoundException {
+        
+        String sqlQuery = "INSERT INTO contatos (nome, telefone, celular, endereco) VALUES (?, ?, ?, ?)";
 
         try {
-            PreparedStatement stmt = this.conexao.getConnection().prepareStatement(sqlInsert);
+            PreparedStatement stmt = this.conexao.getConnection().prepareStatement(sqlQuery);
             stmt.setString(1, contato.getNome());
             stmt.setString(2, contato.getTelefone());
             stmt.setString(3, contato.getCelular());
             stmt.setString(4, contato.getEndereco());
 
-            ResultSet rs = stmt.executeQuery();
-            if (rs.next()) {
-                id = rs.getLong(0);
-            }
+            stmt.executeUpdate();
 
             this.conexao.commit();
         } catch (SQLException e) {
             this.conexao.rollback();
             throw e;
         }
-
-        return id;
     }
 
     public int alterar(Contato contato) throws SQLException, ClassNotFoundException {

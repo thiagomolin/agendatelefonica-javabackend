@@ -14,7 +14,6 @@ angular.module("AgendaApp", [])
             };
 
             self.salvar = function () {
-                self.contato = undefined;
                 var metodo = 'POST';
                 if (self.contato.id) {
                     metodo = 'PUT';
@@ -29,28 +28,24 @@ angular.module("AgendaApp", [])
                 }, function errorCallback(response) {
                     self.ocorreuErro();
                 });
-            };
-
-            self.editar = function (contato) {
-                //TODO CODE HERE     
                 self.contato = undefined;
-                //TODO CODE HERE         
             };
 
             self.removerContato = function () {
-                alert("crapper");
                 $http({
                     method: 'DELETE',
-                    url: urlBase + 'chamados/' + self.contato.id + '/'
-                }).then(function successCallback(response) {                    
-                    alert(self.contato.id);
+                    url: urlBase + 'contatos/' + self.contato.id + '/'
+                }).then(function successCallback(response) {
                     self.atualizarTabela();
                 }, function errorCallback(response) {
-                    alert("shit");
                     self.ocorreuErro();
                 });
                 self.contato = undefined;
-                self.confirmar = undefined; 
+                self.confirmar = undefined;
+            };
+
+            self.alterar = function (contato) {
+                self.contato = contato;
             };
 
             self.ocorreuErro = function () {
@@ -62,8 +57,7 @@ angular.module("AgendaApp", [])
                 self.contato = contato;
             };
 
-            self.cancelarRemocao = function () {
-                alert("crapper2");
+            self.cancelar = function () {
                 self.confirmar = undefined;
                 self.contato = undefined;
             };
