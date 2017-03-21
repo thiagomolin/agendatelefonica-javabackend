@@ -1,6 +1,7 @@
 
 angular.module("AgendaApp", [])
-        .controller("AgendaController", function ($http) {
+        .value('urlBase', 'http://localhost:8080/AgendaTelefonica1/rest/')
+        .controller("AgendaController", function ($http, urlBase) {
             var self = this;
 
             self.contatos = [];
@@ -8,32 +9,52 @@ angular.module("AgendaApp", [])
             self.contato = undefined;
             self.confirmar = undefined;
 
-            var tempContato1 = {
-                id: 2,
-                nome: 'Rodrigo',
-                telefone: 4932145687,
-                celular: 4587564231,
-                endereco: 'Rua camões 897'
+            self.novo = function () {
+                self.contato = {};
             };
-
-            var tempContato2 = {
-                id: 3,
-                nome: 'Grazi',
-                telefone: 79874655,
-                celular: 12357895,
-                endereco: 'Rua 3, 897'
-            };
-
-            self.contatos.push(tempContato1);
-            self.contatos.push(tempContato2);
 
             self.salvar = function () {
                 self.contato = undefined;
-                //TODO CODE HERE
+                var metodo = 'POST';
+                if (self.contato.id) {
+                    metodo = 'PUT';
+                }
+
+                $http({
+                    method: metodo,
+                    url: urlBase + 'contatos/',
+                    data: self.contato
+                }).then(function successCallback(response) {
+                    self.atualizarTabela();
+                }, function errorCallback(response) {
+                    self.ocorreuErro();
+                });
             };
 
-            self.novo = function () {
-                self.contato = {};
+            self.editar = function (contato) {
+                //TODO CODE HERE     
+                self.contato = undefined;
+                //TODO CODE HERE         
+            };
+
+            self.removerContato = function () {
+                alert("crapper");
+                $http({
+                    method: 'DELETE',
+                    url: urlBase + 'chamados/' + self.contato.id + '/'
+                }).then(function successCallback(response) {                    
+                    alert(self.contato.id);
+                    self.atualizarTabela();
+                }, function errorCallback(response) {
+                    alert("shit");
+                    self.ocorreuErro();
+                });
+                self.contato = undefined;
+                self.confirmar = undefined; 
+            };
+
+            self.ocorreuErro = function () {
+                alert("Ocorreu um erro inesperado!");
             };
 
             self.confirmarRemocao = function (contato) {
@@ -41,23 +62,28 @@ angular.module("AgendaApp", [])
                 self.contato = contato;
             };
 
-
-
-
-            self.removerContato = function () {
-                self.confirmar = undefined;
-                self.contato = undefined;
-            };
-
             self.cancelarRemocao = function () {
+                alert("crapper2");
                 self.confirmar = undefined;
                 self.contato = undefined;
             };
 
 
-            self.editar = function (contato) {
-                self.contato = undefined;
-                //TODO CODE HERE         
+            self.atualizarTabela = function () {
+                $http({
+                    method: 'GET',
+                    url: urlBase + 'contatos/'
+                }).then(function successCallback(response) {
+                    self.contatos = response.data;
+                    self.contato = undefined;
+                }, function errorCallback(response) {
+                    self.ocorreuErro();
+                });
             };
+
+            self.activate = function () {
+                self.atualizarTabela();
+            };
+            self.activate();
 
         });
